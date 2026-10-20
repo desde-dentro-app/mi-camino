@@ -498,16 +498,21 @@
   $('#add').onclick = () => $('#file').click();
   $('#file').onchange = async e => {
     const files = [...e.target.files];
-    let ok = 0, skip = 0;
+    let ok = 0, skip = 0, err1 = '';
     for (const f of files) {
       const n = norm(f.name);
       const t = TRACKS.find(x => x.match.some(m => n.includes(m)));
       if (!t) { skip++; continue; }
-      try { await dbPut({ id: t.id, name: f.name, blob: f }); ok++; } catch (err) { skip++; }
+      try { await dbPut({ id: t.id, name: f.name, blob: f }); ok++; } catch (err) { skip++; err1 = err1 || String((err && err.message) || err || 'error'); }
     }
     e.target.value = '';
-    $('#add-note').textContent = `Cargados ${ok}` + (skip ? ` · ${skip} no reconocidos` : '') + '. Ya puedes reproducirlos sin conexión.';
-    if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+    let msg;
+    if (!files.length) msg = 'No se eligió ningún archivo.';
+    else if (err1) msg = `No se pudieron guardar los audios en este dispositivo (${err1}). Abre la app desde el icono de la pantalla de inicio, no desde Safari, y prueba otra vez.`;
+    else if (!ok) msg = `Ningún nombre coincide (${files.length} archivos). Los nombres deben incluir, por ejemplo, «Éxito Cuántico», «Hipnosis Diaria», «Memorias Futuras», «Dones y Cualidades», «Meditación del Perdón», «Sanación Regresiva» o «Activación ADN».`;
+    else msg = `Cargados ${ok}` + (skip ? ` · ${skip} no reconocidos` : '') + '. Ya puedes reproducirlos sin conexión.';
+    $('#add-note').textContent = msg;
+    if (ok && navigator.storage && navigator.storage.persist) navigator.storage.persist();
     refreshHave();
   };
 

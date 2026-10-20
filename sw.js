@@ -1,10 +1,10 @@
 // Guarda la app para que abra sin conexión. Los vídeos y los audios no pasan por aquí.
-const CACHE = 'mf-v3';
+const CACHE = 'mf-v4';
 const SHELL = [
   './', 'index.html', 'styles.css', 'app.js', 'content.js', 'fonts.css', 'manifest.webmanifest',
-  'fonts/manrope-latin-300.woff2', 'fonts/manrope-latin-ext-300.woff2',
-  'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
-  'media/hoy.jpg', 'media/camino.jpg', 'media/meditar.jpg', 'media/escribir.jpg',
+  'manrope-latin-300.woff2', 'manrope-latin-ext-300.woff2',
+  'icon-192.png', 'icon-512.png', 'apple-touch-icon.png',
+  'hoy.jpg', 'camino.jpg', 'meditar.jpg', 'escribir.jpg',
 ];
 
 self.addEventListener('install', e => {

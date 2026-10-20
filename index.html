@@ -10,18 +10,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Manifestación">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app" id="app">
 
-  <video class="bg on" id="v-hoy" data-src="media/hoy.mp4" poster="media/hoy.jpg" muted loop playsinline preload="none"></video>
-  <video class="bg" id="v-camino" data-src="media/camino.mp4" poster="media/camino.jpg" muted loop playsinline preload="none"></video>
-  <video class="bg" id="v-meditar" data-src="media/meditar.mp4" poster="media/meditar.jpg" muted loop playsinline preload="none"></video>
-  <video class="bg" id="v-escribir" data-src="media/escribir.mp4" poster="media/escribir.jpg" muted loop playsinline preload="none"></video>
+  <video class="bg on" id="v-hoy" data-src="hoy.mp4" poster="hoy.jpg" muted loop playsinline preload="none"></video>
+  <video class="bg" id="v-camino" data-src="camino.mp4" poster="camino.jpg" muted loop playsinline preload="none"></video>
+  <video class="bg" id="v-meditar" data-src="meditar.mp4" poster="meditar.jpg" muted loop playsinline preload="none"></video>
+  <video class="bg" id="v-escribir" data-src="escribir.mp4" poster="escribir.jpg" muted loop playsinline preload="none"></video>
   <div class="shade"></div>
 
   <!-- HOY -->
@@ -83,7 +83,7 @@
     <div class="sec"><b>Biblioteca</b><span id="lib-count"></span></div>
     <div id="lib"></div>
     <button class="add glass" id="add">Añadir mis audios</button>
-    <input type="file" id="file" accept="audio/*,.mp3" multiple hidden>
+    <input type="file" id="file" multiple hidden>
     <p class="note" id="add-note">Elige los MP3 de tu carpeta. Se guardan solo en este dispositivo.</p>
   </section>
 
