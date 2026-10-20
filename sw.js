@@ -1,5 +1,5 @@
 // Guarda la app para que abra sin conexión. Los vídeos y los audios no pasan por aquí.
-const CACHE = 'mf-v4';
+const CACHE = 'mf-v5';
 const SHELL = [
   './', 'index.html', 'styles.css', 'app.js', 'content.js', 'fonts.css', 'manifest.webmanifest',
   'manrope-latin-300.woff2', 'manrope-latin-ext-300.woff2',

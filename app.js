@@ -476,7 +476,7 @@
   }
   function updateMini() {
     const onMed = $('#meditar').classList.contains('on');
-    const show = !!cur && !onMed;
+    const show = !!cur && !audio.paused && !onMed;
     $('#mp').hidden = !show;
     app.classList.toggle('has-mini', show);
     if (cur) $('#mp-t').textContent = TRACKS.find(t => t.id === cur).title;
