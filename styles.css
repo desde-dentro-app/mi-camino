@@ -198,7 +198,12 @@ nav button.on{color:var(--cream)}
 .card.glass.sel,.day.glass.now{background:rgba(241,229,198,.2)}
 
 /* tapping */
-.screen#tapping{padding:0;overflow:hidden}
+.screen#tapping{padding:0;overflow:hidden;background:#242220}
 .screen#tapping.on{display:block}
-#tap-frame{position:absolute;left:0;right:0;top:0;bottom:calc(env(safe-area-inset-bottom) + 94px);width:100%;height:calc(100% - env(safe-area-inset-bottom) - 94px);border:0;background:#242220}
-.tap-out{position:absolute;right:14px;top:calc(env(safe-area-inset-top) + 10px);z-index:5;padding:8px 13px;border-radius:99px;font-size:12px;font-weight:500;color:var(--t1);text-decoration:none;background:rgba(24,20,21,.7)}
+#tap-frame{position:absolute;left:0;right:0;top:env(safe-area-inset-top);bottom:calc(env(safe-area-inset-bottom) + 92px);width:100%;height:calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 92px);border:0;background:#242220}
+
+/* en el móvil la app ocupa TODA la pantalla, sin franja marrón */
+@media(max-width:599px){
+  html,body{background:#1d191a}
+  .app{position:fixed;inset:0;width:auto;height:auto;max-width:none}
+}
