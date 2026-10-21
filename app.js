@@ -1,7 +1,7 @@
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const VERSION = '9';
+  const VERSION = '10';
   const C = window.CONTENT;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -62,7 +62,7 @@
     showBg(name);
     if (name === 'tapping') {
       const f = $('#tap-frame');
-      if (!f.src) f.src = 'https://centrotapping.pages.dev/tapping';
+      if (!f.getAttribute('src')) f.setAttribute('src', 'tapping/tapping.html');
     }
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
     renderAll();
