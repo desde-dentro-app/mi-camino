@@ -87,7 +87,7 @@ window.CONTENT = {
       steps: [
         { t: 'do', text: 'Elige una de las 3 emociones de ayer y date 5 o 10 minutos para sentirla. Tres caminos: revivir un recuerdo en el que ya la sentiste, usar el cuerpo (postura, sonrisa, movimiento) o hacer algo que te lleve a ella (yoga, música, naturaleza).', more: ['Si se hace demasiado, déjalo en 5 minutos.', 'Si te vienen pensamientos limitantes, no te exijas: dile a tu sistema «estamos a salvo» y sigue poco a poco.'] },
         { t: 'write', id: 'a', q: '¿Qué emoción elegiste y cómo la nutriste? ¿Cómo te sentiste?' },
-        { t: 'do', text: 'Ponte en sus zapatos, adopta su estado emocional y pregúntate: ¿qué haría ella hoy?' },
+        { t: 'do', text: 'Ponte en sus zapatos, adopta su estado emocional y pregúntate: ¿qué haría hoy mi versión exitosa?' },
         { t: 'write', id: 'b', q: 'Elige UNA acción concreta para las próximas 24 horas que te acerque a tu objetivo.', hint: 'Si es grande, al menos prográmala con fecha. Mejor hecho que perfecto.' },
         { t: 'do', text: 'Haz esa acción hoy, o deja puesta la fecha en tu calendario.' },
       ],
@@ -130,7 +130,7 @@ window.CONTENT = {
       why: 'Tus afirmaciones y tu versión exitosa son tu brújula cuando dudas.',
       steps: [
         { t: 'aff' },
-        { t: 'do', text: 'Cuando dudes, pregúntate: ¿qué haría ella? ¿Cómo se lo tomaría? ¿Qué pensaría?' },
+        { t: 'tip', opt: true, title: 'Cuando dudes', text: 'Pregúntate: ¿qué haría mi versión exitosa, la que ya vive mi objetivo? ¿Cómo se lo tomaría? ¿Qué pensaría? Respira y elige desde ahí.' },
         { t: 'write', id: 'd1', q: 'Un momento de hoy en el que actué como mi versión exitosa.', hint: 'Aunque sea pequeño.' },
       ],
     },
