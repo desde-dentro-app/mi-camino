@@ -37,6 +37,8 @@
   const cKey = (n, d, id) => `c${n}.d${d}.${id}`;
   const fmtDate = s => new Date(s + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
   const sleepCount = () => Object.keys(S.sleep.nights).filter(k => S.sleep.nights[k]).length;
+  // El día recién completado se mantiene en la tarjeta hasta medianoche; el siguiente llega al día siguiente.
+  const shownDay = () => { const c = S.cyc, p = c.cur - 1; return p >= 1 && c.done[p] && ((c.doneOn && c.doneOn[p]) ? c.doneOn[p] === todayKey() : p === 1 && c.start === todayKey()) ? p : c.cur; };
   const cycleComplete = () => [1, 2, 3, 4, 5, 6, 7].every(d => S.cyc.done[d]);
 
   let toastT;
@@ -117,9 +119,9 @@
       $('[data-new]', el).onclick = startNew;
       return;
     }
-    const day = C.CYCLE[c.cur - 1];
-    el.innerHTML = `<div class="cyc glass"><div class="k">Ciclo ${c.n} · Día ${c.cur} de 7 · ${etapaDe(c.cur).name}</div><h2>${esc(day.title)}</h2><p>${esc(day.why)}</p>${dots}<button class="btn">Ver qué toca hoy · ${esc(day.time)}</button></div>`;
-    $('.cyc', el).onclick = () => openDay(c.cur);
+    const sd = shownDay(), day = C.CYCLE[sd - 1], fin = !!c.done[sd];
+    el.innerHTML = `<div class="cyc glass"><div class="k">Ciclo ${c.n} · Día ${sd} de 7 · ${etapaDe(sd).name}</div><h2>${esc(day.title)}</h2><p>${esc(day.why)}</p>${dots}<button class="btn">${fin ? 'Día completado ✦ · Ver lo que hice' : `Ver qué toca hoy · ${esc(day.time)}`}</button></div>`;
+    $('.cyc', el).onclick = () => openDay(sd);
   }
 
   function renderHoy() {
@@ -162,7 +164,7 @@
   /* ---------- CAMINO ---------- */
   function renderCamino() {
     const c = S.cyc;
-    $('#stage-pill').textContent = cycleComplete() ? 'Completo' : `Día ${c.cur} de 7`;
+    $('#stage-pill').textContent = cycleComplete() ? 'Completo' : `Día ${shownDay()} de 7`;
     $('#camino-eyebrow').textContent = `Ciclo ${c.n} · desde el ${fmtDate(c.start)}`;
     let h = '';
     C.ETAPAS.forEach(e => {
@@ -352,7 +354,7 @@
         end.innerHTML = '<div class="slide glass"><div class="lab">Desliza para terminar el día</div><div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div><div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div></div>';
         bindSlide($('.slide', end), () => {
           const d = cfg.d, c = S.cyc;
-          c.done[d] = true; if (d === c.cur) c.cur = Math.min(7, d + 1);
+          c.done[d] = true; (c.doneOn = c.doneOn || {})[d] = todayKey(); if (d === c.cur) c.cur = Math.min(7, d + 1);
           save();
           const all = cycleComplete();
           closeSheet();
