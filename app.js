@@ -292,6 +292,8 @@
     } else if (st.t === 'aff') {
       el.innerHTML = '<span class="n">MIS AFIRMACIONES</span><div class="q">Escribe 3 a 5 frases en primera persona, en presente y en positivo.</div><div class="h">Sin «no». Ejemplo: «Soy merecedora de todo lo que deseo». Léelas en voz alta por la mañana y cuando dudes. Se guardan para todos tus días.</div>';
       el.append(area(S.aff, v => { S.aff = v; save(); }, 'Soy…\nTengo…\nMerezco…'));
+    } else if (st.t === 'tip') {
+      el.innerHTML = `<span class="n">${esc(st.title.toUpperCase())}</span><div class="q">${esc(st.text)}</div>`;
     } else if (st.t === 'do') {
       el.innerHTML = `<div class="srow">${tickBtn(S.chk[cfg.ck(i)])}<div class="grow"><p>${esc(st.text)}</p>${st.more ? '<ul class="more">' + st.more.map(m => `<li>${esc(m)}</li>`).join('') + '</ul>' : ''}</div></div>`;
       toggle($('.tick', el));
