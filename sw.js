@@ -1,7 +1,7 @@
 // Guarda la app para que abra sin conexión. Los vídeos y los audios no pasan por aquí.
 // Estrategia: SIEMPRE se pide primero a internet (así los cambios llegan en la siguiente
 // apertura) y solo si no hay conexión se usa la última copia guardada.
-const CACHE = 'mf-v10';
+const CACHE = 'mf-v11';
 const SHELL = [
   './', 'index.html', 'styles.css', 'app.js', 'content.js', 'fonts.css', 'manifest.webmanifest',
   'manrope-latin-300.woff2', 'manrope-latin-ext-300.woff2',
