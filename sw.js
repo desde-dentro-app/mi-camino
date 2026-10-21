@@ -1,7 +1,7 @@
 // Guarda la app para que abra sin conexión. Los vídeos y los audios no pasan por aquí.
 // Estrategia: SIEMPRE se pide primero a internet (así los cambios llegan en la siguiente
 // apertura) y solo si no hay conexión se usa la última copia guardada.
-const CACHE = 'mf-v12';
+const CACHE = 'mf-v14';
 const SHELL = [
   './', 'index.html', 'styles.css', 'app.js', 'content.js', 'fonts.css', 'manifest.webmanifest',
   'manrope-latin-300.woff2', 'manrope-latin-ext-300.woff2',
@@ -27,7 +27,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   const url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.endsWith('.mp4')) return;
+  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.endsWith('.mp4') || url.pathname.endsWith('.mp3')) return;
   // Centro Tapping (audios pesados y con rangos): no pasa por la caché de la app
   if (url.pathname.includes('/tapping/')) return;
   e.respondWith(

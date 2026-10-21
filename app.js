@@ -302,7 +302,6 @@
       $('.arow', el).onclick = () => playTrack(st.id, false);
     } else if (st.t === 'sleep') {
       const drawSleep = () => {
-        const name = S.sleep.shortcut || 'Dormir';
         const n = sleepCount(), tk = todayKey(), on = !!S.sleep.nights[tk];
         const keys = Object.keys(S.sleep.nights).filter(k => S.sleep.nights[k]).sort();
         const dots = Array.from({ length: 21 }, (_, j) => `<i class="${j < n ? 'd' : ''}"></i>`).join('');
@@ -310,20 +309,13 @@
         el.innerHTML = `<span class="n">REPROGRAMACIÓN MENTAL</span>
           <div class="q">${esc(msg)}</div>
           <div class="dots d21" style="margin:14px 0 4px">${dots}</div>
-          <a class="btn" id="sleep-open" href="shortcuts://run-shortcut?name=${encodeURIComponent(name)}" style="text-decoration:none">Abrir mi audio para dormir</a>
-          <button class="btn ghost" id="sleep-mark">${on ? 'Desmarcar esta noche' : 'Marcar esta noche'}</button>
-          <details class="more-d"><summary>Cómo crear el atajo (una sola vez)</summary>
-            <ol class="more">
-              <li>Abre la app <b>Atajos</b> del iPhone y pulsa <b>+</b>.</li>
-              <li>Pulsa <b>Añadir acción</b>, busca <b>Abrir app</b> y elige <b>Offline Player</b>.</li>
-              <li>Ponle como nombre exactamente <b>${esc(name)}</b>.</li>
-              <li>Vuelve aquí y pulsa <b>Abrir mi audio para dormir</b>. La primera vez el iPhone puede preguntar si quieres abrirlo: di que sí.</li>
-            </ol>
-            <label class="h" style="display:block;margin:10px 0 4px">Si le diste otro nombre al atajo, escríbelo aquí:</label>
-            <input class="field" id="sleep-name" value="${esc(name)}">
-          </details>`;
+          <button class="btn" id="sleep-open">${cur === 'dormir' && !audio.paused ? 'Pausar mi audio para dormir' : 'Escuchar mi audio para dormir'}</button>
+          <button class="btn ghost" id="sleep-mark">${on ? 'Desmarcar esta noche' : 'Marcar esta noche'}</button>`;
+        $('#sleep-open', el).onclick = async () => {
+          await playTrack('dormir', false);
+          drawSleep();
+        };
         $('#sleep-mark', el).onclick = () => { if (on) delete S.sleep.nights[tk]; else S.sleep.nights[tk] = true; save(); drawSleep(); updateProg(); };
-        $('#sleep-name', el).onchange = e => { S.sleep.shortcut = e.target.value.trim() || 'Dormir'; save(); drawSleep(); };
       };
       drawSleep();
     } else if (st.t === 'tap') {
@@ -398,9 +390,10 @@
     { id: 'perdon', title: 'Meditación del perdón', tag: 'Día 2', match: ['del perdon'] },
     { id: 'regresiva', title: 'Sanación regresiva', tag: 'Día 4', match: ['sanacion regresiva'] },
     { id: 'adn', title: 'Activación de ADN', tag: 'Día 7 · cada 3 semanas', match: ['activacion adn'] },
+    { id: 'dormir', title: 'Mi audio para dormir', tag: 'Cada noche · 21 noches', match: ['audio para dormir'], url: 'audio/dormir.mp3' },
   ];
   const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-  const have = new Set();
+  const have = new Set(TRACKS.filter(t => t.url).map(t => t.id));  // los alojados en la web siempre están
 
   const dbp = new Promise((res, rej) => {
     if (!window.indexedDB) return rej();
@@ -421,7 +414,7 @@
   const dbKeys = () => tx('readonly', st => st.getAllKeys());
 
   async function refreshHave() {
-    have.clear();
+    have.clear(); TRACKS.forEach(t => t.url && have.add(t.id));
     try { (await dbKeys() || []).forEach(k => have.add(k)); } catch (e) {}
     renderLib(); refreshAudioRows();
   }
@@ -447,12 +440,16 @@
   async function playTrack(id, jump) {
     if (!have.has(id)) { go('meditar'); $('#add-note').textContent = 'Este audio aún no está cargado. Pulsa "Añadir mis audios".'; return; }
     if (cur === id) { audio.paused ? audio.play() : audio.pause(); if (jump) go('meditar'); return; }
-    const rec = await dbGet(id);
-    if (!rec) { have.delete(id); renderLib(); return; }
-    if (curURL) URL.revokeObjectURL(curURL);
-    curURL = URL.createObjectURL(rec.blob);
+    const t0 = TRACKS.find(x => x.id === id);
+    if (curURL) { URL.revokeObjectURL(curURL); curURL = null; }
+    if (t0.url) audio.src = t0.url;
+    else {
+      const rec = await dbGet(id);
+      if (!rec) { have.delete(id); renderLib(); return; }
+      curURL = URL.createObjectURL(rec.blob);
+      audio.src = curURL;
+    }
     cur = id;
-    audio.src = curURL;
     const resume = S.pos[id];
     audio.onloadedmetadata = () => {
       if (resume && resume < audio.duration - 10) audio.currentTime = resume;
@@ -542,7 +539,7 @@
     let msg;
     if (!files.length) msg = 'No se eligió ningún archivo.';
     else if (err1) msg = `No se pudieron guardar los audios en este dispositivo (${err1}). Abre la app desde el icono de la pantalla de inicio, no desde Safari, y prueba otra vez.`;
-    else if (!ok) msg = `Ningún nombre coincide (${files.length} archivos). Los nombres deben incluir, por ejemplo, «Éxito Cuántico», «Hipnosis Diaria», «Memorias Futuras», «Dones y Cualidades», «Meditación del Perdón», «Sanación Regresiva» o «Activación ADN».`;
+    else if (!ok) msg = `Ningún nombre coincide (${files.length} archivos). Los nombres deben incluir, por ejemplo, «Éxito Cuántico», «Hipnosis Diaria», «Memorias Futuras», «Dones y Cualidades», «Meditación del Perdón», «Sanación Regresiva», «Activación ADN» o «Audio para dormir».`;
     else msg = `Cargados ${ok}` + (skip ? ` · ${skip} no reconocidos` : '') + '. Ya puedes reproducirlos sin conexión.';
     $('#add-note').textContent = msg;
     if (ok && navigator.storage && navigator.storage.persist) navigator.storage.persist();
