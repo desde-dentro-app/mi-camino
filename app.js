@@ -1,7 +1,7 @@
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const VERSION = '7';
+  const VERSION = '9';
   const C = window.CONTENT;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -299,7 +299,7 @@
     } else if (st.t === 'tap') {
       el.innerHTML = `<div class="srow">${tickBtn(S.chk[cfg.ck(i)])}<div class="grow"><p><b style="font-weight:500">Haz tu tapping de la noche.</b> Suelta lo que no es tuyo y ábrete a recibir.</p>
         <button class="btn" data-go-tap>Abrir mi Centro Tapping</button>
-        <ul class="more"><li>En Centro Tapping, para esta noche te van bien «Dormir» o «Liberación de la tensión nerviosa y el estrés».</li></ul></div></div>`;
+        <ul class="more"><li>Para esta noche te van bien «Dormir» o «Liberación de la tensión nerviosa y el estrés».</li></ul></div></div>`;
       toggle($('.tick', el));
       $('[data-go-tap]', el).onclick = () => go('tapping');
     }
