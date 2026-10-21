@@ -310,9 +310,14 @@
           <div class="q">${esc(msg)}</div>
           <div class="dots d21" style="margin:14px 0 4px">${dots}</div>
           <button class="btn" id="sleep-open">${cur === 'dormir' && !audio.paused ? 'Pausar mi audio para dormir' : 'Escuchar mi audio para dormir'}</button>
+          <button class="btn ghost" id="sleep-restart">Empezar de nuevo desde el principio</button>
           <button class="btn ghost" id="sleep-mark">${on ? 'Desmarcar esta noche' : 'Marcar esta noche'}</button>`;
         $('#sleep-open', el).onclick = async () => {
           await playTrack('dormir', false);
+          drawSleep();
+        };
+        $('#sleep-restart', el).onclick = async () => {
+          await restartTrack('dormir');
           drawSleep();
         };
         $('#sleep-mark', el).onclick = () => { if (on) delete S.sleep.nights[tk]; else S.sleep.nights[tk] = true; save(); drawSleep(); updateProg(); };
@@ -463,6 +468,12 @@
     renderLib(); updateMini(); refreshAudioRows();
   }
 
+  async function restartTrack(id) {
+    delete S.pos[id]; save();
+    if (cur === id) { audio.currentTime = 0; try { await audio.play(); } catch (e) {} progress(); }
+    else await playTrack(id, false);
+  }
+
   function setMedia(t) {
     if (!('mediaSession' in navigator)) return;
     navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: 'Manifestación' });
@@ -518,6 +529,7 @@
     if (!first) { $('#file').click(); return; }
     playTrack(have.has('exito') ? 'exito' : first.id, false);
   };
+  $('#restart').onclick = () => { if (cur) restartTrack(cur); };
   $('#mp-btn').onclick = () => { audio.paused ? audio.play() : audio.pause(); };
   $('#prog-i').parentElement.addEventListener('click', e => {
     const r = e.currentTarget.getBoundingClientRect();
