@@ -134,6 +134,11 @@ window.CONTENT = {
         { t: 'write', id: 'd1', q: 'Un momento de hoy en el que actué como mi versión exitosa.', hint: 'Aunque sea pequeño.' },
       ],
     },
+    dormir: {
+      title: 'Dormir', time: 'Toda la noche',
+      why: 'Escuchar lo mismo durante 21 noches seguidas o más es lo que va reprogramando tu mente mientras duermes.',
+      steps: [ { t: 'sleep' } ],
+    },
     noche: {
       title: 'Tu noche', time: '15 min',
       why: 'Cerrar el día con tapping y gratitud suelta la carga y entrena a tu cerebro a ver lo que sí funcionó.',

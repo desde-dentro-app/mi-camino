@@ -207,3 +207,12 @@ nav button.on{color:var(--cream)}
   html,body{background:#1d191a}
   .app{position:fixed;inset:0;width:auto;height:auto;max-width:none}
 }
+
+/* dormir */
+.badge{font-size:12px;font-weight:500;color:var(--cream);background:rgba(255,255,255,.12);padding:6px 11px;border-radius:99px;flex:none}
+.dots.d21{gap:4px;flex-wrap:wrap}
+.dots.d21 i{flex:0 0 calc((100% - 80px) / 21);min-width:6px;height:8px;border-radius:8px}
+.more-d{margin-top:16px}
+.more-d summary{font-size:13px;color:var(--cream);cursor:pointer;font-weight:500}
+.more-d .more{margin-top:10px}
+.more-d b{font-weight:500;color:var(--t1)}

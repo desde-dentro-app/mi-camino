@@ -1,7 +1,7 @@
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const VERSION = '11';
+  const VERSION = '12';
   const C = window.CONTENT;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -14,6 +14,7 @@
   S.pos = S.pos || {};
   S.ans = S.ans || {};
   S.chk = S.chk || {};
+  S.sleep = S.sleep || { nights: {}, shortcut: 'Dormir' };
   S.hist = S.hist || [];
   S.aff = S.aff || '';
   S.cyc = S.cyc || { n: 1, start: dkey(new Date()), cur: 1, done: {} };
@@ -35,6 +36,7 @@
   const setA = (k, v) => { if (v && v.trim()) S.ans[k] = v; else delete S.ans[k]; save(); };
   const cKey = (n, d, id) => `c${n}.d${d}.${id}`;
   const fmtDate = s => new Date(s + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+  const sleepCount = () => Object.keys(S.sleep.nights).filter(k => S.sleep.nights[k]).length;
   const cycleComplete = () => [1, 2, 3, 4, 5, 6, 7].every(d => S.cyc.done[d]);
 
   let toastT;
@@ -133,6 +135,7 @@
     $('#racha').textContent = n > 0 ? `Racha · ${n} ${n === 1 ? 'día' : 'días'}` : 'Empieza hoy';
     $('#slide').classList.toggle('done', t.closed);
     $('#slab').textContent = t.closed ? 'Día cerrado. Gracias ✦' : 'Desliza para cerrar el día';
+    $('#sleep-badge').textContent = `${sleepCount()} / 21`;
     renderCyc();
   }
 
@@ -247,6 +250,7 @@
   function isDone(st, i) {
     if (st.t === 'write') return !!A(cfg.key(st.id));
     if (st.t === 'aff') return !!S.aff.trim();
+    if (st.t === 'sleep') return !!S.sleep.nights[todayKey()];
     if (st.adn && adnRecent() && !S.chk[cfg.ck(i)]) return true;
     return !!S.chk[cfg.ck(i)];
   }
@@ -296,6 +300,32 @@
       el.innerHTML = `<div class="arow" data-a="${st.id}"><div class="play"></div><div class="grow"><h4>${esc(tr.title)}</h4><p>${esc(st.text)}</p>${extra}<div class="st" data-st></div></div>${tickBtn(S.chk[cfg.ck(i)])}</div>`;
       toggle($('.tick', el));
       $('.arow', el).onclick = () => playTrack(st.id, false);
+    } else if (st.t === 'sleep') {
+      const drawSleep = () => {
+        const name = S.sleep.shortcut || 'Dormir';
+        const n = sleepCount(), tk = todayKey(), on = !!S.sleep.nights[tk];
+        const keys = Object.keys(S.sleep.nights).filter(k => S.sleep.nights[k]).sort();
+        const dots = Array.from({ length: 21 }, (_, j) => `<i class="${j < n ? 'd' : ''}"></i>`).join('');
+        const msg = n >= 21 ? `Completaste ${n} noches ✦ Puedes seguir todo el tiempo que quieras.` : `Llevas ${n} de 21 noches. ${on ? 'Esta noche ya está marcada.' : 'Cuando te vayas a dormir, ponlo y márcala.'}`;
+        el.innerHTML = `<span class="n">REPROGRAMACIÓN MENTAL</span>
+          <div class="q">${esc(msg)}</div>
+          <div class="dots d21" style="margin:14px 0 4px">${dots}</div>
+          <a class="btn" id="sleep-open" href="shortcuts://run-shortcut?name=${encodeURIComponent(name)}" style="text-decoration:none">Abrir mi audio para dormir</a>
+          <button class="btn ghost" id="sleep-mark">${on ? 'Desmarcar esta noche' : 'Marcar esta noche'}</button>
+          <details class="more-d"><summary>Cómo crear el atajo (una sola vez)</summary>
+            <ol class="more">
+              <li>Abre la app <b>Atajos</b> del iPhone y pulsa <b>+</b>.</li>
+              <li>Pulsa <b>Añadir acción</b>, busca <b>Abrir app</b> y elige <b>Offline Player</b>.</li>
+              <li>Ponle como nombre exactamente <b>${esc(name)}</b>.</li>
+              <li>Vuelve aquí y pulsa <b>Abrir mi audio para dormir</b>. La primera vez el iPhone puede preguntar si quieres abrirlo: di que sí.</li>
+            </ol>
+            <label class="h" style="display:block;margin:10px 0 4px">Si le diste otro nombre al atajo, escríbelo aquí:</label>
+            <input class="field" id="sleep-name" value="${esc(name)}">
+          </details>`;
+        $('#sleep-mark', el).onclick = () => { if (on) delete S.sleep.nights[tk]; else S.sleep.nights[tk] = true; save(); drawSleep(); updateProg(); };
+        $('#sleep-name', el).onchange = e => { S.sleep.shortcut = e.target.value.trim() || 'Dormir'; save(); drawSleep(); };
+      };
+      drawSleep();
     } else if (st.t === 'tap') {
       el.innerHTML = `<div class="srow">${tickBtn(S.chk[cfg.ck(i)])}<div class="grow"><p><b style="font-weight:500">Haz tu tapping de la noche.</b> Suelta lo que no es tuyo y ábrete a recibir.</p>
         <button class="btn" data-go-tap>Abrir mi Centro Tapping</button>
@@ -334,8 +364,10 @@
       }
     } else {
       const idx = { manana: 0, dia: 1, noche: 2 }[cfg.id];
-      end.innerHTML = '<button class="btn">Hecho por hoy</button>';
-      $('.btn', end).onclick = () => { today().t[idx] = true; save(); closeSheet(); };
+      if (idx !== undefined) {
+        end.innerHTML = '<button class="btn">Hecho por hoy</button>';
+        $('.btn', end).onclick = () => { today().t[idx] = true; save(); closeSheet(); };
+      }
     }
     sin.append(end);
     sheet.hidden = false;
